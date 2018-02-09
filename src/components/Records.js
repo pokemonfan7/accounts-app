@@ -3,6 +3,7 @@ import Record from './Record';
 // import { getJSON } from 'jquery';
 import axios from 'axios';
 import RecordForm from './RecordForm';
+import AmountBox from './AmountBox'
 
 export default class Records extends Component {
     constructor(props){
@@ -14,6 +15,7 @@ export default class Records extends Component {
         };
         this.addRecord=this.addRecord.bind(this);
         this.updateRecord=this.updateRecord.bind(this);
+        this.deleteRecord=this.deleteRecord.bind(this);
     }
     componentDidMount(){
     //     getJSON("https://5a7bfd3b4c1e2d00124a5d8e.mockapi.io/api/v1/records").then(
@@ -69,6 +71,35 @@ export default class Records extends Component {
         })
     }
 
+    deleteRecord(record){
+        // console.log(record)
+        const recordIndex=this.state.records.indexOf(record);
+        const newRecords=this.state.records.filter((item,index)=>index!==recordIndex);
+        this.setState({records:newRecords});
+    }
+
+    Credit(){
+        let credits=this.state.records.filter(record=>{
+           return record.amount>=0;
+        });
+        return credits.reduce((prev,curr)=>{
+            return prev+Number.parseFloat(curr.amount);
+        },0);
+    }
+
+    Debit(){
+        let debits=this.state.records.filter(record=>{
+            return record.amount<0;
+        });
+        return debits.reduce((prev,curr)=>{
+            return prev+Number.parseFloat(curr.amount);
+        },0);
+    }
+
+    Result(){
+        return this.Credit()+this.Debit();
+    }
+
   render() {
         const{error,isLoaded,records}=this.state;                //const不用=
       let recordsComponent;
@@ -90,7 +121,14 @@ export default class Records extends Component {
                         </tr>
                         </thead>
                         <tbody>
-                        {records.map((record,i)=><Record key={record.id} recordList={record} handleEditRecord={this.updateRecord} />)}
+                        {records.map(
+                            (record,i)=>
+                                <Record key={record.id}
+                                        recordList={record}
+                                        handleEditRecord={this.updateRecord}
+                                        handleDeleteRecord={this.deleteRecord}
+                                />
+                        )}
                         </tbody>
                     </table>
 
@@ -99,6 +137,11 @@ export default class Records extends Component {
         return(
             <div>
                 <h2>Records</h2>
+                <div className="row mb-3">
+                    <AmountBox title="Credit" type="success" count={this.Credit()} />
+                    <AmountBox title="Debit" type="danger" count={this.Debit()} />
+                    <AmountBox title="Result" type="info" count={this.Result()} />
+                </div>
                 <RecordForm handleNewRecord={this.addRecord} />
                 {recordsComponent}
             </div>

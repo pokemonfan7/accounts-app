@@ -8,14 +8,24 @@ export default class Record extends Component {
         this.state={
             edit:false
         };
-        this.Edit=this.Edit.bind(this);
+        this.editToggle=this.editToggle.bind(this);
         this.Update=this.Update.bind(this);
     }
 
-    Edit(){
+    editToggle(){
         this.setState({
             edit:!this.state.edit
         })
+    }
+
+    handleDelete(e){
+        e.preventDefault();
+        axios.delete(`https://5a7bfd3b4c1e2d00124a5d8e.mockapi.io/api/v1/records/${this.props.recordList.id}`).then(
+            response=>this.props.handleDeleteRecord(this.props.recordList)
+        ).catch(
+            error=>console.log(error.message)
+        )
+
     }
 
     Update(event){
@@ -28,7 +38,10 @@ export default class Record extends Component {
         // console.log(inputValue)
         axios.put(`https://5a7bfd3b4c1e2d00124a5d8e.mockapi.io/api/v1/records/${this.props.recordList.id}`,
             inputValue).then(
-            response=>{this.setState({edit:false});this.props.handleEditRecord(this.props.recordList,response.data)}
+            response=>{
+                this.setState({edit:false});
+                this.props.handleEditRecord(this.props.recordList,response.data)
+            }
         ).catch(
             error=>console.log(error.message)
         )
@@ -39,10 +52,10 @@ export default class Record extends Component {
             <tr>
                 <td>{this.props.recordList.date}</td>
                 <td>{this.props.recordList.title}</td>
-                <td>{this.props.recordList.amount}</td>
+                <td>￥{this.props.recordList.amount}</td>
                 <td>
-                    <button className="btn btn-info mr-1" onClick={this.Edit}>Edit</button>
-                    <button className="btn btn-danger">Delete</button>
+                    <button className="btn btn-info mr-1" onClick={this.editToggle}>Edit</button>
+                    <button className="btn btn-danger" onClick={this.handleDelete.bind(this)}>Delete</button>
                 </td>
             </tr>
         );
@@ -56,7 +69,7 @@ export default class Record extends Component {
                 <td><input type="text" className="form-control" defaultValue={this.props.recordList.amount} ref={input=>this.amount=input} /></td>
                 <td>
                     <button className="btn btn-info mr-1" onClick={this.Update}>Update</button>
-                    <button className="btn btn-danger" onClick={this.Edit}>Cancel</button>
+                    <button className="btn btn-danger" onClick={this.editToggle}>Cancel</button>
                 </td>
             </tr>
         );
