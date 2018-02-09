@@ -12,6 +12,7 @@ export default class Records extends Component {
             isLoaded:false,
             records:[]
         };
+        this.addRecord=this.addRecord.bind(this);
     }
     componentDidMount(){
     //     getJSON("https://5a7bfd3b4c1e2d00124a5d8e.mockapi.io/api/v1/records").then(
@@ -37,6 +38,18 @@ export default class Records extends Component {
         )
 
     }
+
+    addRecord(record){
+        this.setState({
+            error:null,
+            isLoaded:true,
+            records:[
+                ...this.state.records,
+                record
+            ]
+        })
+    }
+
   render() {
         const{error,isLoaded,records}=this.state;                //const不用=
       let recordsComponent;
@@ -66,7 +79,7 @@ export default class Records extends Component {
         return(
             <div>
                 <h2>Records</h2>
-                <RecordForm />
+                <RecordForm handleNewRecord={this.addRecord} />
                 {recordsComponent}
             </div>
         );

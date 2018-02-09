@@ -13,8 +13,8 @@ export default class Record extends Component {
     }
 }
 Record.propTypes={
-    id:propTypes.number,
+    id:propTypes.string,
     date:propTypes.string,
     title:propTypes.string,
-    amount:propTypes.string
+    amount:propTypes.number
 };
