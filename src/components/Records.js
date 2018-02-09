@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Record from './Record';
 // import { getJSON } from 'jquery';
 import axios from 'axios';
+import RecordForm from './RecordForm';
 
 export default class Records extends Component {
     constructor(props){
@@ -38,14 +39,15 @@ export default class Records extends Component {
     }
   render() {
         const{error,isLoaded,records}=this.state;                //const不用=
+      let recordsComponent;
         if(error){
-            return <h1>Error:{error.message}</h1>         //error.responseText
+            recordsComponent= (<h1>Error:{error.message}</h1>)   ;      //error.responseText
         }else if(!isLoaded){
-            return <h1>Loading...</h1>
+            recordsComponent= (<h1>Loading...</h1>);
         }else{
-            return (
-                <div>
-                    <h2>Records</h2>
+            recordsComponent=(
+
+
                     <table className="table table-bordered">
                         <thead>
                         <tr>
@@ -58,9 +60,16 @@ export default class Records extends Component {
                         {records.map((record,i)=><Record key={record.id} {...record} />)}
                         </tbody>
                     </table>
-                </div>
+
             );
         }
+        return(
+            <div>
+                <h2>Records</h2>
+                <RecordForm />
+                {recordsComponent}
+            </div>
+        );
   }
 }
 
