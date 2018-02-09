@@ -13,6 +13,7 @@ export default class Records extends Component {
             records:[]
         };
         this.addRecord=this.addRecord.bind(this);
+        this.updateRecord=this.updateRecord.bind(this);
     }
     componentDidMount(){
     //     getJSON("https://5a7bfd3b4c1e2d00124a5d8e.mockapi.io/api/v1/records").then(
@@ -50,6 +51,24 @@ export default class Records extends Component {
         })
     }
 
+    updateRecord(record,data){
+        const recordIndex=this.state.records.indexOf(record);
+         const newRecords=this.state.records.map((item, index) => {
+                if (index !== recordIndex) {
+                    return item;
+                }
+                return {
+                    ...item,
+                    ...data
+                };
+            }
+        );
+         // console.log(newRecords);
+        this.setState({
+            records:newRecords
+        })
+    }
+
   render() {
         const{error,isLoaded,records}=this.state;                //const不用=
       let recordsComponent;
@@ -67,10 +86,11 @@ export default class Records extends Component {
                             <th>Date</th>
                             <th>Title</th>
                             <th>Amount</th>
+                            <th>Action</th>
                         </tr>
                         </thead>
                         <tbody>
-                        {records.map((record,i)=><Record key={record.id} {...record} />)}
+                        {records.map((record,i)=><Record key={record.id} recordList={record} handleEditRecord={this.updateRecord} />)}
                         </tbody>
                     </table>
 
